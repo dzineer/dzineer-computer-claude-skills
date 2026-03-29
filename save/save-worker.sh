@@ -4,12 +4,12 @@
 # Usage: save-worker.sh [session_id] [target_folder]
 #
 #   session_id     (optional) Claude session ID to extract context from.
-#                  If omitted, expects a pre-written snapshot at <target>/.claude/_save_snapshot.md
+#                  If omitted, expects a pre-written snapshot at <target>/tasks/_save_snapshot.md
 #   target_folder  (optional) Directory to save tasks/ and memory/ into.
 #                  Defaults to current working directory.
 #
 # Examples:
-#   save-worker.sh                                    # snapshot must exist at $PWD/.claude/_save_snapshot.md
+#   save-worker.sh                                    # snapshot must exist at $PWD/tasks/_save_snapshot.md
 #   save-worker.sh abc-123-def                        # extract from session, save to $PWD
 #   save-worker.sh abc-123-def /path/to/project       # extract from session, save to /path/to/project
 #   save-worker.sh "" /path/to/project                # snapshot must exist, save to /path/to/project
@@ -25,7 +25,7 @@ TARGET_DIR="${2:-$(pwd)}"
 # Resolve to absolute path
 TARGET_DIR="$(cd "$TARGET_DIR" && pwd)"
 
-SNAPSHOT="${TARGET_DIR}/.claude/_save_snapshot.md"
+SNAPSHOT="${TARGET_DIR}/snapshots/_save_snapshot.md"
 
 # --- If session ID provided, extract context from the JSONL file ---
 if [ -n "$SESSION_ID" ]; then
@@ -51,10 +51,10 @@ if [ -n "$SESSION_ID" ]; then
   JSONL_SIZE=$(wc -l < "$JSONL_FILE" | tr -d ' ')
   echo "Session size: ${JSONL_SIZE} lines"
 
-  mkdir -p "${TARGET_DIR}/.claude"
+  mkdir -p "${TARGET_DIR}/snapshots"
 
   # Extract ALL user/assistant text messages from the JSONL into a file
-  EXTRACT="${TARGET_DIR}/.claude/_session_extract.txt"
+  EXTRACT="${TARGET_DIR}/snapshots/_session_extract.txt"
   python3 -c "
 import sys, json
 
@@ -114,7 +114,7 @@ Do these steps in order:
    - ${TARGET_DIR}/tasks/TASKS.md
    - ${TARGET_DIR}/memory/MEMORY.md
 
-3. Write a snapshot file at ${SNAPSHOT} combining everything. Format:
+3. mkdir -p ${TARGET_DIR}/snapshots and write a snapshot file at ${SNAPSHOT} combining everything. Format:
 
 # Session Snapshot
 Timestamp: (current ISO timestamp)
@@ -168,11 +168,8 @@ echo "Processing snapshot into structured files..."
 echo "Target: ${TARGET_DIR}"
 
 # --- Process snapshot into structured files ---
-claude -p \
-  --dangerously-skip-permissions \
-  --model sonnet \
-  --no-session-persistence \
-  "You are a save-worker. Read the raw snapshot file and produce structured save files.
+PROMPT=$(cat <<ENDOFPROMPT
+You are a save-worker. Read the raw snapshot file and produce structured save files.
 
 Read the snapshot at: ${SNAPSHOT}
 
@@ -181,28 +178,46 @@ Then do BOTH of these:
 --- TASKS --- Save to ${TARGET_DIR}/tasks/
 
 1. mkdir -p ${TARGET_DIR}/tasks/
-2. If ${TARGET_DIR}/tasks/TASKS.md already exists, rename it to ${TARGET_DIR}/tasks/TASKS_\$(date +%Y%m%d_%H%M%S).md.
+2. If ${TARGET_DIR}/tasks/TASKS.md already exists, rename it to ${TARGET_DIR}/tasks/TASKS_$(date +%Y%m%d_%H%M%S).md.
 3. Write ${TARGET_DIR}/tasks/TASKS.md with these exact sections:
    ## In Progress
    ## Pending
    ## Completed (recent)
    Use - [ ] for incomplete tasks and - [x] for completed tasks. Include descriptions as sub-bullets.
-4. Write ${TARGET_DIR}/tasks/tasks.json — a JSON file with this schema:
-   {
-     \"last_synced\": \"<ISO timestamp>\",
-     \"tasks\": {
-       \"in_progress\": [{\"subject\": \"...\", \"description\": \"...\", \"status\": \"in_progress\", \"slug\": \"...\", \"subtasks_dir\": \"${TARGET_DIR}/tasks/<slug>/\", \"subtasks\": [...]}],
-       \"pending\": [...],
-       \"completed\": [...]
-     }
-   }
-   The slug is the subject slugified (e.g. \"Fix auth bug\" -> \"fix-auth-bug\").
+4. Write ${TARGET_DIR}/tasks/tasks.yaml (primary) AND ${TARGET_DIR}/tasks/tasks.json (mirror).
+   YAML schema example:
+   last_synced: "2026-01-01T00:00:00Z"
+   tasks:
+     in_progress:
+       - subject: "Fix auth bug"
+         description: "..."
+         status: in_progress
+         slug: "fix-auth-bug"
+         subtasks_dir: "${TARGET_DIR}/tasks/fix-auth-bug/"
+         subtasks:
+           - subject: "Write tests"
+             status: pending
+     pending:
+       - subject: "Add logging"
+         description: "..."
+         status: pending
+         slug: "add-logging"
+     completed:
+       - subject: "Setup CI"
+         description: "..."
+         status: completed
+         slug: "setup-ci"
+   The slug is the subject slugified (e.g. "Fix auth bug" -> "fix-auth-bug").
+   Write tasks.json with the exact same data in JSON format.
 5. For each active (non-completed) task that has subtasks, create:
-   - ${TARGET_DIR}/tasks/<slug>/tasks.json — same schema scoped to subtasks, with a parent_task field
-   - ${TARGET_DIR}/tasks/<slug>/TASKS.md — itemized subtask breakdown
+   - ${TARGET_DIR}/tasks/SLUG/tasks.yaml — same schema scoped to subtasks, with a parent_task field
+   - ${TARGET_DIR}/tasks/SLUG/tasks.json — JSON mirror of the above
+   - ${TARGET_DIR}/tasks/SLUG/TASKS.md — itemized subtask breakdown
+   (replace SLUG with the actual slug)
 6. Write/update ${TARGET_DIR}/tasks/INDEX.md with:
    ## Current
    - [TASKS.md](./TASKS.md)
+   - [tasks.yaml](./tasks.yaml)
    - [tasks.json](./tasks.json)
    ## History
    - list all TASKS_*.md files, newest first
@@ -210,26 +225,41 @@ Then do BOTH of these:
 --- MEMORY --- Save to ${TARGET_DIR}/memory/
 
 1. mkdir -p ${TARGET_DIR}/memory/
-2. If ${TARGET_DIR}/memory/MEMORY.md already exists, rename it to ${TARGET_DIR}/memory/MEMORY_\$(date +%Y%m%d_%H%M%S).md.
+2. If ${TARGET_DIR}/memory/MEMORY.md already exists, rename it to ${TARGET_DIR}/memory/MEMORY_$(date +%Y%m%d_%H%M%S).md.
 3. Write ${TARGET_DIR}/memory/MEMORY.md — a full context memory dump from the snapshot. Include everything from Key Context, Memory, and Important File Paths sections. Organize with clear headings.
-4. Write ${TARGET_DIR}/memory/memory.json with this schema:
-   {
-     \"timestamp\": \"<ISO timestamp>\",
-     \"project\": \"${TARGET_DIR}\",
-     \"context\": \"...\",
-     \"active_work\": [...],
-     \"key_decisions\": [...],
-     \"important_files\": [...],
-     \"debugging_insights\": [...],
-     \"user_preferences\": [...]
-   }
+4. Write ${TARGET_DIR}/memory/memory.yaml (primary) AND ${TARGET_DIR}/memory/memory.json (mirror).
+   YAML schema example:
+   timestamp: "2026-01-01T00:00:00Z"
+   project: "${TARGET_DIR}"
+   context: "Summary of what was being worked on"
+   active_work:
+     - "Item 1"
+   key_decisions:
+     - "Decision 1"
+   important_files:
+     - path: "/path/to/file"
+       description: "What it is"
+   debugging_insights:
+     - "Insight 1"
+   user_preferences:
+     - "Preference 1"
+   Write memory.json with the exact same data in JSON format.
 5. Write/update ${TARGET_DIR}/memory/INDEX.md with:
    ## Current
    - [MEMORY.md](./MEMORY.md)
+   - [memory.yaml](./memory.yaml)
    - [memory.json](./memory.json)
    ## History
    - list all MEMORY_*.md files, newest first
 
 --- CLEANUP ---
 After all files are written successfully, delete ${SNAPSHOT}.
-Print SAVE COMPLETE when done, or SAVE FAILED: <reason> if something went wrong."
+Print SAVE COMPLETE when done, or SAVE FAILED followed by the reason if something went wrong.
+ENDOFPROMPT
+)
+
+claude -p \
+  --dangerously-skip-permissions \
+  --model sonnet \
+  --no-session-persistence \
+  "$PROMPT"

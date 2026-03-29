@@ -8,7 +8,7 @@ Save session tasks and memory. Can save the current session OR a different (full
 ## Usage
 
 ```
-/save                              # save current session to {cwd}
+/save                              # save current session (snapshot → {cwd}/snapshots/, tasks → {cwd}/tasks/, memory → {cwd}/memory/)
 /save {session_id}                 # resume that session to extract context, save to {cwd}
 /save {session_id} {target_folder} # resume that session, save to target_folder
 /save "" {target_folder}           # save current session to target_folder
@@ -18,7 +18,7 @@ Save session tasks and memory. Can save the current session OR a different (full
 
 **If no session_id is given** (saving current session):
 
-1. Write `{target}/.claude/_save_snapshot.md` with everything you know — raw dump, be fast:
+1. Write `{target}/snapshots/_save_snapshot.md` with everything you know — raw dump, be fast:
 
 ```markdown
 # Session Snapshot
@@ -50,7 +50,7 @@ Project: {target}
 - {path}: {what it is}
 ```
 
-2. Run the worker:
+2. Run the worker (pass the target directory — defaults to cwd):
 ```bash
 ~/.claude/skills/save/save-worker.sh "" "{target}"
 ```
