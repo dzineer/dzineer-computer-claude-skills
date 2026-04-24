@@ -1,0 +1,51 @@
+{
+  "name": "MemoryFlow",
+  "title": "How Eidetic remembers",
+  "description": "An AI agent's query flows through a tiered memory system: short-term cache, long-term wiki graph, and vector index. Their results merge in hybrid recall and return as ranked wiki documents.",
+  "cycleSeconds": 7,
+  "nodes": [
+    { "id": "agent-in", "label": "AI Agent", "sub": "query", "icon": "agent", "color": "cyan", "x": 530, "y": 40, "w": 180, "h": 92 },
+    { "id": "engine", "label": "Eidetic Engine", "sub": "orchestrator", "icon": "engine", "color": "cyan", "x": 510, "y": 190, "w": 220, "h": 96 },
+    { "id": "stm", "label": "STM Cache", "sub": "short-term · fast", "icon": "stm", "color": "red", "x": 140, "y": 350, "w": 220, "h": 96 },
+    { "id": "graph", "label": "Wiki Graph", "sub": "long-term · persistent", "icon": "graph", "color": "purple", "x": 510, "y": 350, "w": 220, "h": 96 },
+    { "id": "vector", "label": "Vector Index", "sub": "HNSW · semantic", "icon": "vector", "color": "green", "x": 880, "y": 350, "w": 220, "h": 96 },
+    { "id": "recall", "label": "Hybrid Recall", "sub": "RRF + deep traversal", "icon": "recall", "color": "amber", "x": 510, "y": 510, "w": 220, "h": 96 },
+    { "id": "docs", "label": "Wiki Docs", "sub": "ranked response", "icon": "doc", "color": "purple", "x": 530, "y": 660, "w": 180, "h": 92 }
+  ],
+  "edges": [
+    { "from": "agent-in", "to": "engine", "fromSide": "bottom", "toSide": "top" },
+    { "from": "engine", "to": "stm", "fromSide": "bottom", "toSide": "top" },
+    { "from": "engine", "to": "graph", "fromSide": "bottom", "toSide": "top" },
+    { "from": "engine", "to": "vector", "fromSide": "bottom", "toSide": "top" },
+    { "from": "stm", "to": "recall", "fromSide": "bottom", "toSide": "top" },
+    { "from": "graph", "to": "recall", "fromSide": "bottom", "toSide": "top" },
+    { "from": "vector", "to": "recall", "fromSide": "bottom", "toSide": "top" },
+    { "from": "recall", "to": "docs", "fromSide": "bottom", "toSide": "top" }
+  ],
+  "flows": [
+    {
+      "id": "dispatch",
+      "label": "(1) dispatch",
+      "color": "cyan",
+      "path": ["agent-in", "engine", "graph"],
+      "phaseStart": 0,
+      "phaseEnd": 0.4
+    },
+    {
+      "id": "merge",
+      "label": "(2) merge",
+      "color": "amber",
+      "path": ["graph", "recall"],
+      "phaseStart": 0.42,
+      "phaseEnd": 0.7
+    },
+    {
+      "id": "respond",
+      "label": "(3) respond",
+      "color": "purple",
+      "path": ["recall", "docs"],
+      "phaseStart": 0.72,
+      "phaseEnd": 1.0
+    }
+  ]
+}

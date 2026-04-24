@@ -1,38 +1,29 @@
 #!/usr/bin/env bash
-# save-worker.sh — Spawns a fresh Claude session to process a save.
+# save-worker.sh — Processes a save snapshot into structured task/memory files.
+# No AI required — pure shell + python.
 #
 # Usage: save-worker.sh [session_id] [target_folder]
 #
 #   session_id     (optional) Claude session ID to extract context from.
-#                  If omitted, expects a pre-written snapshot at <target>/tasks/_save_snapshot.md
+#                  If omitted, expects a pre-written snapshot at <target>/snapshots/_save_snapshot.md
 #   target_folder  (optional) Directory to save tasks/ and memory/ into.
 #                  Defaults to current working directory.
-#
-# Examples:
-#   save-worker.sh                                    # snapshot must exist at $PWD/tasks/_save_snapshot.md
-#   save-worker.sh abc-123-def                        # extract from session, save to $PWD
-#   save-worker.sh abc-123-def /path/to/project       # extract from session, save to /path/to/project
-#   save-worker.sh "" /path/to/project                # snapshot must exist, save to /path/to/project
 
 set -euo pipefail
 
-# Allow spawning claude from within a claude session
-unset CLAUDECODE 2>/dev/null || true
-
 SESSION_ID="${1:-}"
 TARGET_DIR="${2:-$(pwd)}"
-
-# Resolve to absolute path
 TARGET_DIR="$(cd "$TARGET_DIR" && pwd)"
 
 SNAPSHOT="${TARGET_DIR}/snapshots/_save_snapshot.md"
+SKILL_DIR="$(cd "$(dirname "$0")" && pwd)"
+TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
+ISO_TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 # --- If session ID provided, extract context from the JSONL file ---
 if [ -n "$SESSION_ID" ]; then
   echo "Extracting context from session: ${SESSION_ID}"
-  echo "Target: ${TARGET_DIR}"
 
-  # Find the session JSONL file
   JSONL_FILE=""
   for f in ~/.claude/projects/*/"${SESSION_ID}.jsonl"; do
     if [ -f "$f" ]; then
@@ -43,124 +34,26 @@ if [ -n "$SESSION_ID" ]; then
 
   if [ -z "$JSONL_FILE" ]; then
     echo "ERROR: Could not find JSONL file for session ${SESSION_ID}"
-    echo "Searched: ~/.claude/projects/*/${SESSION_ID}.jsonl"
     exit 1
   fi
 
   echo "Found session file: ${JSONL_FILE}"
-  JSONL_SIZE=$(wc -l < "$JSONL_FILE" | tr -d ' ')
-  echo "Session size: ${JSONL_SIZE} lines"
-
   mkdir -p "${TARGET_DIR}/snapshots"
 
-  # Extract ALL user/assistant text messages from the JSONL into a file
-  EXTRACT="${TARGET_DIR}/snapshots/_session_extract.txt"
-  python3 -c "
-import sys, json
-
-messages = []
-with open(sys.argv[1], 'r') as f:
-    for line in f:
-        try:
-            obj = json.loads(line.strip())
-            msg_type = obj.get('type', '')
-            if msg_type in ('user', 'assistant'):
-                msg = obj.get('message', {})
-                if isinstance(msg, dict):
-                    content = msg.get('content', '')
-                    if isinstance(content, list):
-                        text_parts = []
-                        for p in content:
-                            if isinstance(p, dict) and p.get('type') == 'text':
-                                text_parts.append(p.get('text', ''))
-                        content = '\n'.join(text_parts)
-                    elif not isinstance(content, str):
-                        content = str(content)
-                    if content and len(content.strip()) > 5:
-                        messages.append((msg_type, content))
-        except:
-            pass
-
-# Write all messages
-for role, content in messages:
-    print(f'=== [{role.upper()}] ===')
-    print(content)
-    print()
-" "$JSONL_FILE" > "$EXTRACT" 2>/dev/null || true
-
-  EXTRACT_LINES=$(wc -l < "$EXTRACT" | tr -d ' ')
-  EXTRACT_BYTES=$(wc -c < "$EXTRACT" | tr -d ' ')
-  echo "Extracted: ${EXTRACT_LINES} lines, ${EXTRACT_BYTES} bytes"
-
-  if [ "$EXTRACT_BYTES" -lt 50 ]; then
-    echo "ERROR: Could not extract meaningful context from JSONL"
-    rm -f "$EXTRACT"
-    exit 1
-  fi
-
-  # Now spawn a fresh claude session to read the extract + existing files and build the snapshot
-  claude -p \
-    --dangerously-skip-permissions \
-    --model sonnet \
-    --no-session-persistence \
-    "You are a save-worker extracting session context into a snapshot.
-
-Do these steps in order:
-
-1. Read the session extract file: ${EXTRACT}
-   This contains ALL user/assistant messages from the session.
-
-2. Also read these files if they exist (for baseline context):
-   - ${TARGET_DIR}/tasks/TASKS.md
-   - ${TARGET_DIR}/memory/MEMORY.md
-
-3. mkdir -p ${TARGET_DIR}/snapshots and write a snapshot file at ${SNAPSHOT} combining everything. Format:
-
-# Session Snapshot
-Timestamp: (current ISO timestamp)
-Project: ${TARGET_DIR}
-Source Session: ${SESSION_ID}
-
-## Tasks - In Progress
-(list all in-progress tasks with descriptions and subtasks using - [ ] / - [x])
-
-## Tasks - Pending
-(list all pending tasks)
-
-## Tasks - Completed (recent)
-(list recently completed tasks)
-
-## Key Context / Memory
-- What was being worked on and why
-- Important decisions made
-- Architecture notes and patterns
-- Debugging insights
-- User preferences observed
-- Key files modified and why
-- Everything relevant from the session
-
-## Important File Paths
-- path: what it is
-
-Include EVERYTHING. Merge the existing TASKS.md/MEMORY.md with new info from the session messages.
-Write the file now."
-
-  rm -f "$EXTRACT"
+  # Extract user/assistant messages and build snapshot directly with python
+  python3 "${SKILL_DIR}/snapshot_from_jsonl.py" "$JSONL_FILE" "$SNAPSHOT" "$TARGET_DIR" "$SESSION_ID"
 
   if [ ! -f "$SNAPSHOT" ]; then
     echo "ERROR: Failed to create snapshot from session ${SESSION_ID}"
     exit 1
   fi
-
-  echo "Snapshot created successfully."
+  echo "Snapshot created from session."
 fi
 
 # --- Validate snapshot exists ---
 if [ ! -f "$SNAPSHOT" ]; then
   echo "ERROR: Snapshot not found at ${SNAPSHOT}"
-  echo "Either provide a session ID to extract from, or write the snapshot first."
-  echo ""
-  echo "Usage: save-worker.sh [session_id] [target_folder]"
+  echo "Either provide a session ID or write the snapshot first."
   exit 1
 fi
 
@@ -168,98 +61,42 @@ echo "Processing snapshot into structured files..."
 echo "Target: ${TARGET_DIR}"
 
 # --- Process snapshot into structured files ---
-PROMPT=$(cat <<ENDOFPROMPT
-You are a save-worker. Read the raw snapshot file and produce structured save files.
+python3 "${SKILL_DIR}/process_snapshot.py" "$SNAPSHOT" "$TARGET_DIR" "$TIMESTAMP" "$ISO_TIMESTAMP"
 
-Read the snapshot at: ${SNAPSHOT}
+# --- Sync global auto memory into local memory ---
+# The auto memory system writes to ~/.claude/projects/.../memory/
+# We copy those frontmatter-based .md files into {cwd}/memory/ so everything is local.
+GLOBAL_MEMORY_DIR=""
+# Find the global memory dir that matches this project path (or a parent path)
+SEARCH_DIR="$TARGET_DIR"
+while [ "$SEARCH_DIR" != "/" ] && [ -z "$GLOBAL_MEMORY_DIR" ]; do
+  PROJECT_KEY="$(echo "$SEARCH_DIR" | sed 's|[/_]|-|g; s|^-||')"
+  for d in ~/.claude/projects/*/memory; do
+    [ -d "$d" ] || continue
+    DIR_KEY="$(basename "$(dirname "$d")")"
+    if [ "$DIR_KEY" = "$PROJECT_KEY" ] || [ "$DIR_KEY" = "-${PROJECT_KEY}" ]; then
+      GLOBAL_MEMORY_DIR="$d"
+      break
+    fi
+  done
+  SEARCH_DIR="$(dirname "$SEARCH_DIR")"
+done
 
-Then do BOTH of these:
+if [ -n "$GLOBAL_MEMORY_DIR" ] && [ -d "$GLOBAL_MEMORY_DIR" ]; then
+  echo "Syncing global auto memory from ${GLOBAL_MEMORY_DIR} -> ${TARGET_DIR}/memory/"
+  mkdir -p "${TARGET_DIR}/memory"
+  for f in "$GLOBAL_MEMORY_DIR"/*.md; do
+    [ -f "$f" ] || continue
+    fname="$(basename "$f")"
+    # Skip MEMORY.md — we generate our own
+    [ "$fname" = "MEMORY.md" ] && continue
+    cp "$f" "${TARGET_DIR}/memory/${fname}"
+  done
+  echo "Global auto memory synced."
+else
+  echo "No global auto memory dir found for project key: ${PROJECT_KEY}"
+fi
 
---- TASKS --- Save to ${TARGET_DIR}/tasks/
-
-1. mkdir -p ${TARGET_DIR}/tasks/
-2. If ${TARGET_DIR}/tasks/TASKS.md already exists, rename it to ${TARGET_DIR}/tasks/TASKS_$(date +%Y%m%d_%H%M%S).md.
-3. Write ${TARGET_DIR}/tasks/TASKS.md with these exact sections:
-   ## In Progress
-   ## Pending
-   ## Completed (recent)
-   Use - [ ] for incomplete tasks and - [x] for completed tasks. Include descriptions as sub-bullets.
-4. Write ${TARGET_DIR}/tasks/tasks.yaml (primary) AND ${TARGET_DIR}/tasks/tasks.json (mirror).
-   YAML schema example:
-   last_synced: "2026-01-01T00:00:00Z"
-   tasks:
-     in_progress:
-       - subject: "Fix auth bug"
-         description: "..."
-         status: in_progress
-         slug: "fix-auth-bug"
-         subtasks_dir: "${TARGET_DIR}/tasks/fix-auth-bug/"
-         subtasks:
-           - subject: "Write tests"
-             status: pending
-     pending:
-       - subject: "Add logging"
-         description: "..."
-         status: pending
-         slug: "add-logging"
-     completed:
-       - subject: "Setup CI"
-         description: "..."
-         status: completed
-         slug: "setup-ci"
-   The slug is the subject slugified (e.g. "Fix auth bug" -> "fix-auth-bug").
-   Write tasks.json with the exact same data in JSON format.
-5. For each active (non-completed) task that has subtasks, create:
-   - ${TARGET_DIR}/tasks/SLUG/tasks.yaml — same schema scoped to subtasks, with a parent_task field
-   - ${TARGET_DIR}/tasks/SLUG/tasks.json — JSON mirror of the above
-   - ${TARGET_DIR}/tasks/SLUG/TASKS.md — itemized subtask breakdown
-   (replace SLUG with the actual slug)
-6. Write/update ${TARGET_DIR}/tasks/INDEX.md with:
-   ## Current
-   - [TASKS.md](./TASKS.md)
-   - [tasks.yaml](./tasks.yaml)
-   - [tasks.json](./tasks.json)
-   ## History
-   - list all TASKS_*.md files, newest first
-
---- MEMORY --- Save to ${TARGET_DIR}/memory/
-
-1. mkdir -p ${TARGET_DIR}/memory/
-2. If ${TARGET_DIR}/memory/MEMORY.md already exists, rename it to ${TARGET_DIR}/memory/MEMORY_$(date +%Y%m%d_%H%M%S).md.
-3. Write ${TARGET_DIR}/memory/MEMORY.md — a full context memory dump from the snapshot. Include everything from Key Context, Memory, and Important File Paths sections. Organize with clear headings.
-4. Write ${TARGET_DIR}/memory/memory.yaml (primary) AND ${TARGET_DIR}/memory/memory.json (mirror).
-   YAML schema example:
-   timestamp: "2026-01-01T00:00:00Z"
-   project: "${TARGET_DIR}"
-   context: "Summary of what was being worked on"
-   active_work:
-     - "Item 1"
-   key_decisions:
-     - "Decision 1"
-   important_files:
-     - path: "/path/to/file"
-       description: "What it is"
-   debugging_insights:
-     - "Insight 1"
-   user_preferences:
-     - "Preference 1"
-   Write memory.json with the exact same data in JSON format.
-5. Write/update ${TARGET_DIR}/memory/INDEX.md with:
-   ## Current
-   - [MEMORY.md](./MEMORY.md)
-   - [memory.yaml](./memory.yaml)
-   - [memory.json](./memory.json)
-   ## History
-   - list all MEMORY_*.md files, newest first
-
---- CLEANUP ---
-After all files are written successfully, delete ${SNAPSHOT}.
-Print SAVE COMPLETE when done, or SAVE FAILED followed by the reason if something went wrong.
-ENDOFPROMPT
-)
-
-claude -p \
-  --dangerously-skip-permissions \
-  --model sonnet \
-  --no-session-persistence \
-  "$PROMPT"
+# --- Cleanup ---
+rm -f "$SNAPSHOT"
+echo "SAVE COMPLETE"

@@ -1,0 +1,49 @@
+{
+  "name": "A2AFlow",
+  "title": "A2A communication stack",
+  "description": "Agent A uses the A2A library to query the Registry for Agent B's location, then sends a secure mTLS message to the Multi-Agent Host which routes it to the right agent instance.",
+  "cycleSeconds": 6,
+  "nodes": [
+    { "id": "agent-a", "label": "Agent A", "sub": "caller", "icon": "agent", "color": "cyan", "x": 70, "y": 200, "w": 180, "h": 120 },
+    { "id": "registry", "label": "Registry Service", "sub": "discovery · mTLS", "icon": "registry", "color": "amber", "x": 510, "y": 40, "w": 220, "h": 120 },
+    { "id": "host", "label": "Multi-Agent Host", "sub": "A2A web server", "icon": "host", "color": "green", "x": 960, "y": 200, "w": 220, "h": 120 },
+    { "id": "agent-b", "label": "Agent B", "sub": "", "icon": "agent", "color": "purple", "x": 980, "y": 360, "w": 90, "h": 74 },
+    { "id": "agent-c", "label": "Agent C", "sub": "", "icon": "agent", "color": "purple", "x": 1080, "y": 360, "w": 90, "h": 74 }
+  ],
+  "flows": [
+    {
+      "id": "lookup",
+      "label": "(1) lookup",
+      "color": "cyan",
+      "path": ["agent-a", "registry"],
+      "phaseStart": 0,
+      "phaseEnd": 0.3
+    },
+    {
+      "id": "response",
+      "label": "(2) host address",
+      "color": "amber",
+      "path": ["registry", "agent-a"],
+      "phaseStart": 0.34,
+      "phaseEnd": 0.6
+    },
+    {
+      "id": "send",
+      "label": "(3) A2A message",
+      "color": "green",
+      "path": ["agent-a", "host", "agent-b"],
+      "phaseStart": 0.62,
+      "phaseEnd": 1.0
+    }
+  ],
+  "boundaries": [
+    {
+      "label": "HOST BOUNDARY",
+      "x": 940,
+      "y": 180,
+      "w": 260,
+      "h": 280,
+      "color": "green"
+    }
+  ]
+}

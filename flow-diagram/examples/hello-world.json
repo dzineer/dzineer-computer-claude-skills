@@ -1,0 +1,51 @@
+{
+  "name": "HelloWorldFlow",
+  "title": "Hello world flow",
+  "description": "A minimal two-node flow diagram: a client sends a request to a server and receives a response.",
+  "cycleSeconds": 4,
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Client",
+      "sub": "initiator",
+      "icon": "user",
+      "color": "cyan",
+      "x": 200,
+      "y": 340,
+      "w": 220,
+      "h": 96
+    },
+    {
+      "id": "server",
+      "label": "Server",
+      "sub": "responder",
+      "icon": "host",
+      "color": "green",
+      "x": 820,
+      "y": 340,
+      "w": 220,
+      "h": 96
+    }
+  ],
+  "edges": [
+    { "from": "client", "to": "server", "fromSide": "right", "toSide": "left" }
+  ],
+  "flows": [
+    {
+      "id": "req",
+      "label": "(1) request",
+      "color": "cyan",
+      "path": ["client", "server"],
+      "phaseStart": 0,
+      "phaseEnd": 0.45
+    },
+    {
+      "id": "res",
+      "label": "(2) response",
+      "color": "amber",
+      "path": ["server", "client"],
+      "phaseStart": 0.5,
+      "phaseEnd": 0.95
+    }
+  ]
+}
