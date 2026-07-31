@@ -32,22 +32,33 @@ The argument is auto-detected:
 
 If resolution fails, tell the user what was tried and ask them to provide the full path.
 
-## Step 2: Read saved state
+## Step 2: Read saved state — TIERED (token discipline)
 
-Read the following files in order from `{target}`. For each file that exists, read it and internalize the context:
+The restore cost lives here. Read Tier 1 always; read Tier 2 files ONLY when Tier 1 points at
+them for the work you're about to do. Do NOT sweep the memory/ folder "for broader context" —
+that burns ~25k tokens restating what Tier 1 already says.
 
-1. **`{target}/tasks/TASKS.md`** — current task list (in-progress, pending, completed)
-2. **`{target}/memory/MEMORY.md`** — key context, decisions, important files
-3. **`{target}/tasks/tasks.yaml`** — structured task data with slugs and subtask pointers
-4. **`{target}/memory/memory.yaml`** — structured memory data
-5. **`{target}/snapshots/_save_snapshot.md`** — latest raw snapshot (if exists)
+### Tier 1 — always read (target: under ~10KB total)
 
-Also check for additional memory files in `{target}/memory/`:
-- `session_summary.md`
-- `user_preferences.md`
-- `feedback_*.md`
-- `project_*.md`
-- `ui_*.md`
+1. **`{target}/memory/full.md`** — ground truth: active task pointer, next actions, recent
+   decisions with file:line refs. This is the primary restore file.
+2. **`{target}/tasks/TASKS.md`** — the task INDEX (done / blocked / queued, one line each,
+   pointing at per-task files).
+3. **The active task file** that full.md / TASKS.md / CLAUDE.md "Active Task" points to
+   (e.g. `tasks/<slug>/tasks.md` or `tasks/<slug>/tasks.gibber`). Read only the ACTIVE one.
+
+### Tier 2 — on demand only (never by default)
+
+- `tasks/tasks.yaml`, `memory/memory.yaml` — structured lookups when you need a specific slug/decision
+- `snapshots/_save_snapshot.md` — only if full.md looks stale (older timestamp than the snapshot)
+- `journal/INDEX.md` — scan ONLY when starting work in an area; surface matching gotchas
+  ("heads up: J003 — CLI ignores --model after session init")
+- `memory/session_summary.md`, `memory/feedback_*.md`, `memory/project_*.md`, `memory/ui_*.md`,
+  `memory/projects.md`, rolling `memory_last_*.md` — reference library; read a specific file only
+  when the task touches its topic. (Auto-memory already loads the important ones each session.)
+
+If Tier 1 files are missing or contradict each other, THEN fall back to the snapshot and yaml
+files, and say so in the summary.
 
 ## Step 3: Present
 

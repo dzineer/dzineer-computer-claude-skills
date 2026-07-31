@@ -1,0 +1,262 @@
+pipeline_name: "Strategic Discovery & Sales Pipeline"
+version: "1.0"
+origin: "Reverse-engineered from OO/Donal methodology"
+description: "Full pipeline from founder discovery to sales-ready deliverables"
+
+stages:
+  - name: "Stage 0: Research & Profile"
+    description: "Build a complete picture of the target before any contact"
+    deliverables:
+      - lead_profile:
+          description: "Company + founder research dossier"
+          data_sources:
+            - "Public website crawl"
+            - "SEO metrics (Ahrefs DR, SEMrush AS, DataForSEO rank)"
+            - "AI visibility audit (test 6 queries across ChatGPT, Perplexity, Google AI)"
+            - "Backlink profile analysis"
+            - "Competitor identification"
+            - "Social/GitHub/public surface scan"
+          output_format: "YAML profile + working spreadsheet"
+      - competitor_scan:
+          description: "Identify 4-6 direct competitors"
+          data_points:
+            - "Pricing"
+            - "Backlinks / referring domains"
+            - "Domain authority"
+            - "AI claims vs actual delivery"
+            - "Content volume"
+
+  - name: "Stage 1: Data Pull & Audit"
+    description: "Quantified assessment of current digital presence"
+    deliverables:
+      - ai_visibility_audit:
+          description: "Score 0-100 based on AI citation testing"
+          methodology:
+            - "Select 6 buyer-intent queries relevant to the business"
+            - "Test each across ChatGPT, Perplexity, Google AI Overview"
+            - "Score: citations found / total tests * 100"
+            - "Document what AI recommends INSTEAD"
+          root_cause_analysis:
+            - "Content inventory (volume, freshness, format)"
+            - "Schema markup presence (SoftwareApplication, FAQ, Organization)"
+            - "URL structure (crawl efficiency)"
+            - "External citations (editorial vs self-generated)"
+            - "Q&A architecture (question-format content)"
+      - backlink_analysis:
+          description: "Real authority vs inflated metrics"
+          metrics:
+            - "DR vs AS comparison (inflated vs accurate)"
+            - "Total backlinks vs referring domains"
+            - "Anchor text distribution (% from client footers vs editorial)"
+            - "Link gap vs competitors"
+      - competitor_matrix:
+          description: "Head-to-head comparison framework"
+          columns:
+            - "Company name"
+            - "Positioning"
+            - "Monthly pricing range"
+            - "Backlinks"
+            - "Referring domains"
+            - "Domain strength rank"
+            - "AI claims (hollow vs verified)"
+            - "Citation evidence (documented vs absent)"
+          thesis_format: "[Competitor] is hollow. The window is open."
+
+  - name: "Stage 2: Strategy Hub (ORB)"
+    description: "13-section interactive strategy site deployed to Cloudflare Pages"
+    architecture:
+      hosting: "Cloudflare Pages (free, fast, custom domain)"
+      structure: "SPA with section-based navigation"
+      branding: "Client name + 'Strategy Hub | [Your Company]'"
+      confidentiality: "Marked confidential throughout"
+    sections:
+      - id: 0
+        name: "The Platform"
+        type: "overview"
+        content: "Company snapshot, key metrics, founding story"
+      - id: 1
+        name: "Revenue/Scale Story"
+        type: "metrics"
+        content: "User count, MRR estimate, growth trajectory"
+      - id: 2
+        name: "The Gap"
+        type: "problem"
+        content: "AI visibility score, zero-citation proof"
+      - id: 3
+        name: "The Threat"
+        type: "urgency"
+        content: "Competitor claims, market window closing"
+      - id: 4
+        name: "AI Audit"
+        type: "data"
+        content: "6 queries tested, score 0/100, root causes"
+      - id: 5
+        name: "Competitor Matrix"
+        type: "comparison"
+        content: "5-6 companies compared on metrics + claims"
+      - id: 6
+        name: "Backlink Truth"
+        type: "data"
+        content: "DR vs AS, anchor distribution, editorial gap"
+      - id: 7
+        name: "Content Strategy"
+        type: "plan"
+        content: "4-engine content plan (AEO posts, comparisons, schema, data publishing)"
+      - id: 8
+        name: "AI Ranking Plan"
+        type: "roadmap"
+        content: "90-day 3-phase plan (Foundation → Content → Authority)"
+      - id: 9
+        name: "Industry Angle"
+        type: "positioning"
+        content: "Before/after messaging pivot, FDE model"
+      - id: 10
+        name: "Wedge Offers"
+        type: "commercial"
+        content: "Track 1 (platform) + Track 2 (distribution) offers"
+      - id: 11
+        name: "Revenue Model"
+        type: "commercial"
+        content: "Partnership economics, scenario math tables"
+      - id: 12
+        name: "Ways to Work"
+        type: "cta"
+        content: "3 entry points, recommended sequence, booking CTA"
+
+    design_patterns:
+      navigation: "Card grid with emoji icons, category labels, descriptions"
+      sections: "Numbered (01 - 13) with dot separators"
+      data: "Tables with clear column headers, comparative formatting"
+      proof: "Named clients, specific metrics, dates, screenshots"
+      persuasion_flow: "Problem → Evidence → Solution → Numbers → Guarantee → CTA"
+      tone: "Data-driven but conversational. Specific. Action-oriented."
+      color: "Professional dark theme, accent color for CTAs"
+
+  - name: "Stage 3: Sales Orb (One-Pager)"
+    description: "Single scrollable page that builds the complete case"
+    structure:
+      - hero:
+          format: "Hook statement with key metric + competitor urgency"
+          example: "1,000 agents. $0 AI citations. [Competitor] just added 'AI SEO' to their pitch deck."
+      - metrics_dashboard:
+          format: "4 key numbers in a row"
+          metrics: ["AI Citations", "Keywords Tracked", "Monthly Organic", "Platform Users"]
+      - sections:
+          - name: "AI Citation Gap"
+            type: "problem"
+            content: "Score, test methodology, data table, what AI recommends instead"
+          - name: "Competitive Threat"
+            type: "urgency"
+            content: "Claims vs reality table, OO delivery evidence, named clients, pricing context"
+          - name: "Backlink Reality"
+            type: "data"
+            content: "Headline metrics, comparative table, anchor distribution, diagnosis"
+          - name: "90-Day Fix"
+            type: "solution"
+            content: "3-phase timeline (Foundation → Content → Authority)"
+          - name: "Partnership Model"
+            type: "commercial"
+            content: "2 models (referral vs wholesale), scenario math table"
+          - name: "Ways to Work"
+            type: "options"
+            content: "3 tracks, recommended sequence, retention argument"
+          - name: "What Happens Next"
+            type: "cta"
+            content: "One call. 15 minutes. Model the numbers. + Calendar booking button"
+
+  - name: "Stage 4: Call Briefing"
+    description: "Internal document for the sales caller"
+    structure:
+      - hub_link: "Reference to strategy hub"
+      - ten_things: "10 key facts about the prospect, each with bold headline + supporting data"
+      - call_flow: "5-step script (Hook → Proof → Gap → Model → Close)"
+      - objections: "3 anticipated objections with data-backed rebuttals"
+      - quick_reference: "All URLs organized by type"
+
+  - name: "Stage 5: Deliverables Package"
+    description: "Everything sent to the prospect"
+    deliverables:
+      - strategy_hub: "Full 13-section site"
+      - one_pager: "Sales orb overview"
+      - audit_report: "Detailed audit deck"
+      - working_sheet: "Google Sheet with all data + models"
+      - email_draft: "Intro/follow-up email template"
+      - call_briefing: "Internal prep doc"
+      - process_diagrams: "Animated flow visualizations (optional)"
+
+  - name: "Stage 6: Flywheel"
+    description: "Compounding loop diagram showing long-term value"
+    nodes:
+      - "Client Joins Platform"
+      - "AI System Deployed (48hrs)"
+      - "AI Citations Appear (6-8 weeks)"
+      - "Lead Flow Increases"
+      - "ROI Becomes Visible"
+      - "Peer Referrals Start"
+      - "Platform Growth Accelerates"
+      - "Authority Multiplies"
+    key_insight: "System compounds while competitors maintain flat monthly value"
+
+commercial_models:
+  model_a:
+    name: "Referral / Revenue Share"
+    how_it_works: "You refer, clients sign up with us directly"
+    your_cut: "15% ongoing revenue per client"
+    partner_cut: "85% of client revenue"
+    admin: "Partner handles all delivery and support"
+    best_for: "Passive income, zero operational overhead"
+
+  model_b:
+    name: "Wholesale Reseller"
+    how_it_works: "Partner charges you wholesale, you package and resell at markup"
+    your_cut: "Resale price minus wholesale cost (typically $120/client margin)"
+    partner_cut: "Wholesale price ($80/client)"
+    admin: "You own the relationship, partner handles delivery"
+    best_for: "Higher margin, own the customer relationship"
+
+  model_c:
+    name: "JV / Co-ownership"
+    how_it_works: "Joint venture with shared equity"
+    your_cut: "Based on equity split + role"
+    partner_cut: "Based on equity split + role"
+    admin: "Shared"
+    best_for: "Long-term alignment, strategic partnerships"
+
+  scenario_table:
+    rows: ["5% adoption", "10% adoption", "20% adoption"]
+    columns: ["Agent Count", "Model A (You)", "Model A (Partner)", "Model B (You)", "Model B (Partner)"]
+
+content_strategy_template:
+  engines:
+    - name: "AEO Cornerstone Posts"
+      count: 5
+      format: "Long-form Q&A targeting zero-citation queries"
+      purpose: "Give AI systems content to cite"
+    - name: "Comparison Pages"
+      count: 4
+      format: "Head-to-head vs each competitor"
+      purpose: "Capture decision-stage searches"
+    - name: "Schema + Structured Data"
+      types: ["SoftwareApplication", "FAQPage", "Organization", "AggregateRating"]
+      purpose: "Make site machine-readable"
+    - name: "Data Publishing"
+      format: "Annual industry report with original survey data"
+      purpose: "Create citable statistics others reference"
+
+  ninety_day_plan:
+    phase_1:
+      name: "Foundation"
+      days: "1-14"
+      tasks: ["Schema deployment", "URL structure fix", "Technical SEO baseline"]
+    phase_2:
+      name: "Content Authority"
+      days: "15-45"
+      tasks: ["5 AEO cornerstone posts", "Comparison pages", "FAQ pages per product"]
+    phase_3:
+      name: "External Authority"
+      days: "46-90"
+      tasks: ["5 editorial placements", "G2/Capterra listings", "Link building outreach", "Monthly citation monitoring"]
+
+guarantee:
+  statement: "Measurable improvement in AI citations within 6 weeks or we work for free"
+  purpose: "Eliminates risk objection, demonstrates confidence in methodology"

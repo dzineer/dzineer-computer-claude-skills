@@ -1,0 +1,406 @@
+template_name: "OO Strategic Deep-Dive"
+version: "1.0"
+origin: "Donal/OO Partnership Framework"
+description: "Strategic discovery questionnaire for technical founders stuck in the architect trap"
+
+categories:
+  - name: "Identity & Origin"
+    purpose: "Career narrative, motivation, personality, vision, contrarian edge"
+    questions:
+      - id: 1
+        question: "Walk me through your career arc: first paid gig to now. 5-7 chapters."
+        why_asking: "Career narrative reveals which problems you keep returning to and which you ran from."
+        why_matters: "The pivot points are where the real story is. Origin story IS your brand."
+        example: "Started fixing PCs at 14, fell into web dev, built 100+ sites, shifted to SaaS, now building AI agents."
+      - id: 2
+        question: "What's the one moment you knew building was your craft? Be specific."
+        why_asking: "Origin stories surface the intrinsic motivation that no amount of money replaces."
+        why_matters: "Architect-trap usually starts when the craft IS the joy - which makes it hard to step back into ownership."
+        example: "In 2007 I shipped a quoting engine in 48 hours during a hurricane outage and watched 12 agents close $400k of policies the next day."
+      - id: 3
+        question: "What do you build for FREE that other people charge for?"
+        why_asking: "Free work signals your unfair advantage and your blind spot. You undercharge what comes easy."
+        why_matters: "What you give away for free is often your most valuable, most packageable asset."
+        example: "I built the entire voice-assist stack for myself, then open-sourced it because nobody else seemed to want it."
+      - id: 4
+        question: "Personality type (DISC/Myers-Briggs)? What does that mean for how you sell?"
+        why_asking: "C-personality founders usually under-sell because they pre-qualify too hard and explain too much."
+        why_matters: "Your strategy should lean on artifacts and demos, not rhetoric - if that's your type."
+        example: "High C. I avoid sales calls because I feel dishonest hyping. I'd rather hand someone working code."
+      - id: 5
+        question: "5-year wish: if money was solved, what would you actually be building?"
+        why_asking: "Separates what you'd do for love from what you do for income."
+        why_matters: "Reveals whether the current business is the dream or the day-job. The wedge might be elsewhere."
+        example: "Personal AI agent that runs my whole life. I'd give it away and monetize the cloud infra."
+
+  - name: "Stack & Technical"
+    purpose: "Production-grade skills, speed advantages, complexity ceiling, demo assets, boundaries"
+    questions:
+      - id: 6
+        question: "Top 5 languages/frameworks you're production-grade in (10/10 confidence)."
+        why_asking: "Defines what we can SELL as services with zero ramp time."
+        why_matters: "This is your bench depth - what you can ship without learning curves eating into delivery."
+        example: "Python (FastAPI), Rust (Tauri), TypeScript (React 19), PHP (Laravel), SQL (Postgres + Redis)."
+      - id: 7
+        question: "What 3 problems do you solve faster than 95% of devs?"
+        why_asking: "Speed advantages = premium pricing leverage."
+        why_matters: "If you solve X in 2 hours that takes others 2 days, that's a 10x billable rate justification."
+        example: "Wiring local LLMs into Mac apps, building Claude Code skills, debugging async Python."
+      - id: 8
+        question: "What's the most complex thing you've shipped solo? Plain English."
+        why_asking: "Complex shipped solo = ceiling of your unaided capability."
+        why_matters: "This is what makes a prospect's jaw drop. Your resume highlight."
+        example: "Voice-driven Mac agent: Whisper listens, LM Studio plans, Rust GUI executes, Redis persists - all offline."
+      - id: 9
+        question: "What's your best demo / showpiece? Walk me through a real session."
+        why_asking: "Demo-able products close deals. A live walkthrough is a 10-minute sales asset."
+        why_matters: "Seeing is believing. The best founders have something they can show in under 5 minutes."
+        example: "I say 'summarize my Slack today' - Whisper transcribes, FastAPI hits Slack API, LM Studio summarizes, voice plays back."
+      - id: 10
+        question: "What do you refuse to build? Languages, domains, problem types you avoid."
+        why_asking: "The 'won't do' list defines service catalog boundaries."
+        why_matters: "Pre-protects you from engagements that drain energy or violate values."
+        example: "No enterprise Java. No WordPress. No crypto. No 6-month roadmaps with no clear deliverable."
+
+  - name: "Business History"
+    purpose: "Ownership history, money vs happiness, best/worst models, architect-trap pattern"
+    questions:
+      - id: 11
+        question: "List every business/product/service you've owned or co-owned. Year, outcome."
+        why_asking: "Operating history is the truthful CV. Reveals patterns: solo vs partner, services vs SaaS."
+        why_matters: "Past patterns predict future patterns. We need to know what worked and what didn't."
+        example: "2008-2015 web agency (sold client list). 2016 SaaS attempt (ran out of runway). 2018-now main biz (still running)."
+      - id: 12
+        question: "Which made the most MONEY? Which made you HAPPIEST? Different answer?"
+        why_asking: "Money vs happiness gap is the single most diagnostic question."
+        why_matters: "If happiest != most money, we design the model around the happy work + premium pricing."
+        example: "Most money: $80k MRR on the SaaS. Happiest: 6-month build of the voice stack for $0."
+      - id: 13
+        question: "Best business model you've personally run?"
+        why_asking: "Reveals revenue model preference and natural business shape."
+        why_matters: "We'll try to build something that rhymes with this, not fight your grain."
+        example: "Productized service: fixed scope, fixed price, repeatable delivery."
+      - id: 14
+        question: "Worst business decision you've made (in dollars or years)?"
+        why_asking: "Mistake catalog. Saves us repeating it on the new venture."
+        why_matters: "Every mistake is pre-paid tuition. Document it before we proceed."
+        example: "Took on a $200k custom build with a scope-creeping client. 6 months for effectively $15/hr."
+      - id: 15
+        question: "Have you been 'the architect' while others made the money? What happened?"
+        why_asking: "The architect-trap question. We need to name it to fix it."
+        why_matters: "This is the core pivot. If it's a pattern, we design the business to protect you from it."
+        example: "Was head architect for 5 years. Owners sold for $5M. I got $80k salary + 1% equity = $50k payout."
+
+  - name: "Current Business"
+    purpose: "Metrics, ICP, complaints/loves, strategy, prioritization"
+    questions:
+      - id: 16
+        question: "Current business: MRR, active users, churn %, growth trend. Best numbers you have."
+        why_asking: "Baseline metrics. Tells us what we're scaling FROM and which lever moves the needle."
+        why_matters: "Real numbers drive real strategy. Guesses lead to guesswork."
+        example: "~$40k MRR. ~600 active users. 4% monthly churn. Flat growth for 6 months."
+      - id: 17
+        question: "Customer profile: ideal customer, worst customer. What separates them?"
+        why_asking: "Defines ICP for upsells and new offers."
+        why_matters: "Bad customers cost more than they pay. Need to know who to attract and who to fire."
+        example: "Best: solo operator, 3-10 years in, $50-150k/yr, values automation. Worst: brand-new, on free trial, never converts."
+      - id: 18
+        question: "What's the #1 thing customers complain about? #1 thing they love?"
+        why_asking: "Complaints reveal product gaps. Loves reveal the moat."
+        why_matters: "Customer language = marketing language. We'll use their exact words in positioning."
+        example: "Complain: 'too complicated to set up.' Love: 'once running, it saves me hours every week.'"
+      - id: 19
+        question: "What's your current strategy with AI / agents? Where does it fit?"
+        why_asking: "Maps your AI play and how it connects to existing business."
+        why_matters: "AI is the highest-leverage thing you could be building right now."
+        example: "Building AI agents for lead qualification and appointment booking. Selling as add-on to existing customers."
+      - id: 20
+        question: "If you could cut everything except one product/service, which stays and why?"
+        why_asking: "Forces prioritization."
+        why_matters: "Focus = speed. We need to know your instinct."
+        example: "The core platform. It has revenue, customers, and a clear upgrade path."
+
+  - name: "Best Models"
+    purpose: "Pricing ceiling, deal size, equity appetite, capital allocation instinct"
+    questions:
+      - id: 21
+        question: "Highest hourly rate or project fee you've ever charged and delivered on?"
+        why_asking: "Sets your proven price ceiling."
+        why_matters: "You can't price higher than your confidence allows. We need the high-water mark."
+        example: "$250/hr for fintech integration. $75k for a full platform build."
+      - id: 22
+        question: "Largest single deal you've closed? How did it happen?"
+        why_asking: "Reveals which sales motion actually works for you."
+        why_matters: "If you close via referral, the channel-partner model is a direct fit."
+        example: "$120k 6-month project. Inbound via LinkedIn post. Signed within 2 weeks."
+      - id: 23
+        question: "Revenue-share or equity deal you've done. What happened?"
+        why_asking: "Equity history reveals appetite for upside vs cash."
+        why_matters: "Critical for structuring partnership economics."
+        example: "30% equity as CTO. Company sold for $2M. Got $400k after dilution. Less than hourly would have paid."
+      - id: 24
+        question: "If someone handed you $50k to invest in your own business, where does it go?"
+        why_asking: "Capital allocation reveals where YOU think the leverage is."
+        why_matters: "Your gut answer tells us what you think the bottleneck is."
+        example: "Half on a sales hire, half on marketing. My bottleneck is leads, not product."
+
+  - name: "Network"
+    purpose: "Warm contacts, failed help, admiration list, tribes/communities"
+    questions:
+      - id: 25
+        question: "Top 10 people you'd call for: customers, capital, hires, advice. Name + relationship."
+        why_asking: "Network IS distribution. Most architects underestimate their network depth."
+        why_matters: "Your first 10 customers will come from this list or one degree away."
+        example: "3 agency owners, 2 SaaS founders, 1 VC, 2 consultants, 1 CTO, 1 agency owner."
+      - id: 26
+        question: "Who's tried to help you grow and failed? Why didn't it work?"
+        why_asking: "Failed help attempts reveal the missing puzzle piece."
+        why_matters: "Usually it's distribution, not tech. We need to know what was tried."
+        example: "Marketing consultant ran my ads but didn't understand the vertical. $5k on leads that didn't convert."
+      - id: 27
+        question: "Who do you admire in your space? Who's doing what you wish you were?"
+        why_asking: "Admiration list = blueprint. Competition list = positioning surface."
+        why_matters: "The people you admire reveal the market position you're aiming for."
+        example: "Applied Epic - they own the agency OS. I admire their lock-in and pricing power."
+      - id: 28
+        question: "What communities, groups, or tribes are you part of?"
+        why_asking: "Tribes = lead gen channels."
+        why_matters: "Communities = free distribution if you show up with value."
+        example: "Local BNI chapter, 2 Slack groups, Laravel community, AI Twitter."
+
+  - name: "Positioning & Sales"
+    purpose: "Self-intro, aspirational positioning, recent offers, pricing psychology, objections"
+    questions:
+      - id: 29
+        question: "How do you introduce yourself at a dinner party? To a potential client?"
+        why_asking: "Tests your current positioning."
+        why_matters: "If these answers are different, you have a positioning gap."
+        example: "Dinner party: 'I build software.' Client: 'I build quoting tools for insurance agencies.'"
+      - id: 30
+        question: "If you could be known as 'the _____ guy,' what fills the blank?"
+        why_asking: "Identifies aspirational positioning."
+        why_matters: "This becomes the North Star for all messaging."
+        example: "The insurance tech guy. Or: the guy who automates the boring parts of insurance."
+      - id: 31
+        question: "Last 3 paid offers you made. Price, format, close rate."
+        why_asking: "Pricing + offer format = your sales muscle today."
+        why_matters: "We see if you're under-pricing or under-packaging."
+        example: "$15k website rebuild (closed). $30k 3-mo retainer (lost). $5k consult package (closed)."
+      - id: 32
+        question: "Most you could charge for your best service today? What's stopping you?"
+        why_asking: "Identifies pricing psychology."
+        why_matters: "The gap between what you charge and what you could charge is pure margin."
+        example: "$10k/month retainer. Stopping me: no sales collateral or case studies to justify it."
+      - id: 33
+        question: "What objections do you hear most often? How do you handle them?"
+        why_asking: "Maps your sales friction."
+        why_matters: "Every objection is either a positioning fix or a qualification fix."
+        example: "'Too expensive' = haven't shown enough value. 'Not tech-savvy' = need done-for-you offer."
+
+  - name: "Vision & Goals"
+    purpose: "Money goal, time goal, ideal day, exit strategy"
+    questions:
+      - id: 34
+        question: "Money goal: monthly take-home, timeline, constraints. Be specific."
+        why_asking: "Sets the financial target."
+        why_matters: "Every business model recommendation will be measured against this number."
+        example: "$30k/month take-home within 18 months, working less than 30 hours/week."
+      - id: 35
+        question: "Time goal: hours per week, type of work, what you refuse to do."
+        why_asking: "Defines the work-life container."
+        why_matters: "A $100k/month business at 80 hours/week isn't a win if your goal is freedom."
+        example: "25 hours/week. Building and strategy only. No support tickets, no chasing invoices."
+      - id: 36
+        question: "Describe your ideal Tuesday in 18 months. From wake-up to bedtime."
+        why_asking: "Reveals the life you're optimizing for."
+        why_matters: "We'll design the business around this day, not the other way around."
+        example: "Wake 7, gym 8-9, deep work 10-1, lunch, calls 2-3, build 3-5, done. No laptop after 6."
+      - id: 37
+        question: "Exit goal: hold forever, sell at year X, or runs without you?"
+        why_asking: "Defines the exit strategy."
+        why_matters: "Build-to-sell and build-to-keep require completely different decisions."
+        example: "Something that runs without me. Own it but not operate it day-to-day."
+
+  - name: "Hands-Off"
+    purpose: "Delegation list, sacred work, hiring history"
+    questions:
+      - id: 38
+        question: "List everything you currently do that someone else could do."
+        why_asking: "Identifies delegation opportunities."
+        why_matters: "Every hour on delegatable work is an hour NOT on high-leverage work."
+        example: "Customer support, invoicing, basic bug fixes, content writing, onboarding calls."
+      - id: 39
+        question: "What would you NEVER hand off, even if free?"
+        why_asking: "Identifies your core value zone."
+        why_matters: "This is what you should spend 80% of your time on."
+        example: "Architecture decisions, core product vision, key customer relationships."
+      - id: 40
+        question: "Have you ever hired for marketing or sales? What happened?"
+        why_asking: "Tests your delegation history."
+        why_matters: "If past hires failed, we need to understand why before recommending another."
+        example: "Hired a VA for social media. Lasted 2 months. Generic content, didn't reflect my voice."
+
+  - name: "Acquisition"
+    purpose: "Valuation, takeover playbook"
+    questions:
+      - id: 41
+        question: "If someone offered to acquire your main asset tomorrow, what would you want?"
+        why_asking: "Tests your valuation and exit thinking."
+        why_matters: "Understanding your number helps evaluate build-vs-sell-vs-partner options."
+        example: "$500k + 2 year earn-out + I stay as technical advisor."
+      - id: 42
+        question: "If you took over a competitor's product, what's the first 90 days?"
+        why_asking: "Tests your product strategy instincts."
+        why_matters: "Reveals whether you think like a builder or an operator."
+        example: "Audit codebase, talk to every customer, kill unused features, rebuild onboarding, add AI."
+
+  - name: "Scale Story"
+    purpose: "Largest scale operation"
+    questions:
+      - id: 43
+        question: "Tell me about the biggest thing you've ever managed at scale. What broke?"
+        why_asking: "Your biggest scale story."
+        why_matters: "Proves you can think at scale. The lessons learned are gold for the next attempt."
+        example: "Managed 5000 websites. Revenue was great but support crushed us. Should have automated more."
+
+  - name: "Platform Reuse"
+    purpose: "Vertical expansion potential"
+    questions:
+      - id: 44
+        question: "Could your core platform be forked for other verticals? Which ones?"
+        why_asking: "Tests platform leverage."
+        why_matters: "If the core works, vertical expansion is the fastest growth play."
+        example: "Yes. Real estate, mortgage brokers, financial advisors - anyone with referrals and compliance."
+
+  - name: "Public Surface"
+    purpose: "Why invisible despite capability"
+    questions:
+      - id: 45
+        question: "Why is your public presence quiet given what you've built? Strategic or accidental?"
+        why_asking: "Tests your visibility strategy."
+        why_matters: "Your public surface IS your sales team. If empty, you're invisible to inbound."
+        example: "Accidental. Never thought of myself as public. The work spoke for itself in client networks."
+
+  - name: "Marketplace Fit"
+    purpose: "Energizing vs draining engagements"
+    questions:
+      - id: 46
+        question: "Describe an engagement that energized you. What made it great?"
+        why_asking: "Identifies your energy patterns."
+        why_matters: "We'll design offers around the work that gives you energy."
+        example: "Built a real-time dashboard. The client's 'wow' moment was worth more than the check."
+      - id: 47
+        question: "Describe an engagement that drained you. What made it bad?"
+        why_asking: "Identifies energy drains."
+        why_matters: "We'll design the business to avoid these patterns."
+        example: "6-month custom build. Client treated me like an employee, micromanaged, changed scope weekly."
+
+  - name: "Engagement Structure"
+    purpose: "Pricing model preference"
+    questions:
+      - id: 48
+        question: "Hourly, flat-fee, retainer, or equity - rank and explain why."
+        why_asking: "Tests your pricing model preferences."
+        why_matters: "Preferred model affects everything from sales to delivery to cash flow."
+        example: "1. Retainer (predictable). 2. Flat-fee (clear scope). 3. Equity (upside). 4. Hourly (last resort)."
+
+  - name: "Contract Safety"
+    purpose: "Deal-breaker terms"
+    questions:
+      - id: 49
+        question: "What are your deal-breakers in a contract?"
+        why_asking: "Identifies your business boundaries."
+        why_matters: "Clear boundaries prevent bad deals and protect your time."
+        example: "No IP assignment for core platform. No unlimited revisions. No net-60 payment terms."
+
+  - name: "Network Reaction"
+    purpose: "Gut read on partnership network"
+    questions:
+      - id: 50
+        question: "Looking at the partnership's network, what's your gut? Excited, skeptical, overwhelmed?"
+        why_asking: "Tests comfort with the partnership model."
+        why_matters: "If you're not excited about the network, the partnership won't work."
+        example: "Excited but cautious. Big networks have promised leads before. Need proof."
+
+  - name: "Blind Spots / Hidden Abilities / Ideas"
+    purpose: "Missed questions, hidden skills, quick wins, unique process, dream products, failures, ideas dump"
+    questions:
+      - id: 51
+        question: "What 3 questions did we NOT ask that we SHOULD have?"
+        why_asking: "Catches our blind spots."
+        why_matters: "The best insights often come from the questions nobody thought to ask."
+        example: "You didn't ask about my hardware skills, or my team management, or my finance knowledge."
+      - id: 52
+        question: "What 3 abilities do you have that the market doesn't realize?"
+        why_asking: "Uncovers hidden assets."
+        why_matters: "Hidden skills often become the differentiator in a crowded market."
+        example: "I can do technical sales demos that make non-technical people understand and want the product."
+      - id: 53
+        question: "What 3 existing things of yours could ship to market in 30 days?"
+        why_asking: "Identifies quick-to-market opportunities."
+        why_matters: "Fast revenue builds confidence and funds bigger plays."
+        example: "The file format spec as a paid add-on. The voice app as a $49 purchase. The platform white-labeled."
+      - id: 54
+        question: "Give me an example of a problem ONLY you can solve. Why can't others?"
+        why_asking: "Defines your unfair-advantage zone."
+        why_matters: "The work that justifies premium pricing."
+        example: "Cross-system integration: reverse-engineer 3 undocumented APIs + routing layer + AI-agent-friendly."
+      - id: 55
+        question: "What's your unique process or methodology? Does it have a name?"
+        why_asking: "Identifies packageable IP."
+        why_matters: "A named process is worth 10x an unnamed one. It becomes a brand asset."
+        example: "'Rapid Productization' - take a manual process, automate the core loop, wrap in a UI in 2 weeks."
+      - id: 56
+        question: "If you could build any AI agent for any industry, what would it be?"
+        why_asking: "Reveals your dream product."
+        why_matters: "Dream products often have the best product-market fit because you understand the problem."
+        example: "AI agent handling entire insurance application: lead capture to carrier submission to policy binding."
+      - id: 57
+        question: "What's failed in the past that could work now with AI?"
+        why_asking: "Tests ability to revisit old ideas with new tools."
+        why_matters: "Many great businesses are old ideas + new technology."
+        example: "Automated underwriting. Failed 5 years ago, too complex for simple automation. LLMs change everything."
+      - id: 58
+        question: "Businesses you've almost acquired or partnered with? What happened?"
+        why_asking: "Maps your M&A instincts."
+        why_matters: "Near-misses reveal opportunities worth revisiting."
+        example: "Almost bought a competing tool for $100k. Fell through - seller wanted too much for too little revenue."
+      - id: 59
+        question: "What tools or platforms do you wish existed for your own workflow?"
+        why_asking: "Identifies scratch-your-own-itch opportunities."
+        why_matters: "If you want it, others probably do too."
+        example: "Single dashboard: SaaS metrics, customer health, revenue forecasts - all in one."
+      - id: 60
+        question: "What's the most interesting thing in your industry that nobody's talking about?"
+        why_asking: "Tests your industry insight."
+        why_matters: "Insider knowledge = competitive advantage."
+        example: "Embedded insurance. Policy built into the product purchase. Most agents don't see it coming."
+      - id: 61
+        question: "Free-form: anything else. Ideas, frustrations, dreams, rants. Go."
+        why_asking: "The catch-all. Best insights come when the filter is off."
+        why_matters: "Unstructured = authentic. Raw dumps have strategic value."
+        example: "I'm tired of trading time for money. I want leverage. I want to own the platform, not the project."
+
+business_model_template:
+  columns:
+    - "Model Name"
+    - "Category"
+    - "What Founder Does"
+    - "What Partner Does"
+    - "Target Customer"
+    - "Pricing"
+    - "MRR Potential"
+    - "Days to First Revenue"
+    - "Margin %"
+    - "Energy Fit"
+    - "Architect-Trap Risk"
+    - "Priority Tier"
+    - "Status"
+    - "Notes"
+  priority_tiers:
+    P0: "Do this week"
+    P1: "Do this month"
+    P2: "Stage 2 (after P0/P1 revenue)"
+    P3: "Stage 3+ (park until foundation is solid)"
+    P4: "Nice to have (someday)"
+    P5: "Avoid (trap or distraction)"
