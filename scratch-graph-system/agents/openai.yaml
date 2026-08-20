@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scratch Graph System"
+  short_description: "Build and extend the custom Scratch graph editor"
+  default_prompt: "Use $scratch-graph-system to explain or extend Schema-driven node creation, dragging, connections, routing, and persistence."
